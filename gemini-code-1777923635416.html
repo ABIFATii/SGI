@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategy Governance Initiative</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --green-dark: #0f5c1f;
+  --green-mid: #1a7a2e;
+  --green-bright: #22992d;
+  --green-light: #2db83d;
+  --slate: #1c2a35;
+  --slate-mid: #2c3e50;
+  --slate-light: #3d5166;
+  --white: #ffffff;
+  --off-white: #f5f7f5;
+  --text-muted: #8a9ba8;
+  --border: rgba(34,153,45,0.18);
+  --glass: rgba(255,255,255,0.04);
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--slate);
+  color: var(--white);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ──────────────── SCROLLBAR ──────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--slate); }
+::-webkit-scrollbar-thumb { background: var(--green-mid); border-radius: 2px; }
+
+/* ──────────────── NAVBAR ──────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(28,42,53,0.88);
+  border-bottom: 1px solid var(--border);
+  padding: 0 6vw;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 70px;
+  transition: all 0.3s ease;
+}
+nav.scrolled { height: 60px; background: rgba(15,25,32,0.96); }
+.nav-logo {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none;
+}
+.nav-logo-img {
+  width: 45px; height: 45px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--white);
+}
+.nav-logo-text { line-height: 1.1; }
+.nav-logo-text span:first-child {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 18px; letter-spacing: 2px; color: var(--white);
+}
+.nav-logo-text span:last-child {
+  display: block;
+  font-size: 9px; letter-spacing: 3px; color: var(--green-bright);
+  text-transform: uppercase; font-weight: 500;
+}
+.nav-links { display: flex; align-items: center; gap: 36px; }
+.nav-links a {
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  font-weight: 500;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+  height: 1px; background: var(--green-bright);
+  transform: scaleX(0); transition: transform 0.25s ease;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-cta {
+  background: var(--green-mid) !important;
+  color: white !important; padding: 8px 20px;
+  border-radius: 4px; letter-spacing: 2px !important;
+  transition: background 0.2s, transform 0.2s !important;
+}
+.nav-cta:hover { background: var(--green-bright) !important; transform: translateY(-1px); }
+.nav-cta::after { display: none !important; }
+.hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+.hamburger span { width: 24px; height: 2px; background: white; transition: all 0.3s; }
+.mobile-menu {
+  display: none; position: fixed; top: 70px; left: 0; right: 0;
+  background: rgba(15,25,32,0.98); backdrop-filter: blur(20px);
+  padding: 30px; flex-direction: column; gap: 20px;
+  border-bottom: 1px solid var(--border);
+  z-index: 999;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  color: rgba(255,255,255,0.8); text-decoration: none;
+  font-size: 14px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ──────────────── HERO ──────────────── */
+#home {
+  min-height: 100vh;
+  position: relative;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center;
+  overflow: hidden;
+  padding: 100px 6vw 60px;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(26,122,46,0.22) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 80% at 80% 100%, rgba(15,92,31,0.15) 0%, transparent 70%),
+              linear-gradient(180deg, #0d1b24 0%, #1c2a35 60%, #1a2e22 100%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(34,153,45,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,153,45,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-logo-img {
+  max-width: 380px;
+  width: 80%;
+  margin-bottom: 30px;
+  filter: drop-shadow(0 0 20px rgba(34,153,45,0.4));
+  animation: fadeUp 1s ease both;
+}
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: orbFloat 8s ease-in-out infinite;
+}
+.hero-orb-1 { width: 400px; height: 400px; background: rgba(34,153,45,0.12); top: -100px; right: -100px; animation-delay: 0s; }
+.hero-orb-2 { width: 300px; height: 300px; background: rgba(15,92,31,0.15); bottom: 0; left: -80px; animation-delay: -4s; }
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(20px,-30px) scale(1.1); }
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(34,153,45,0.12); border: 1px solid rgba(34,153,45,0.3);
+  padding: 6px 18px; border-radius: 50px;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--green-bright); margin-bottom: 28px;
+  animation: fadeUp 0.8s ease both;
+}
+.hero-badge i { font-size: 8px; }
+.hero-headline {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 9vw, 110px);
+  letter-spacing: 4px;
+  line-height: 0.92;
+  color: var(--white);
+  margin-bottom: 8px;
+  animation: fadeUp 0.8s 0.15s ease both;
+}
+.hero-headline .green { color: var(--green-bright); }
+.hero-sub {
+  font-family: var(--font-display);
+  font-size: clamp(14px, 2.5vw, 22px);
+  letter-spacing: 8px;
+  color: var(--green-bright);
+  margin-bottom: 20px;
+  animation: fadeUp 0.8s 0.3s ease both;
+}
+.hero-desc {
+  font-size: 15px; color: rgba(255,255,255,0.55);
+  max-width: 560px; margin: 0 auto 44px;
+  font-style: italic;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  animation: fadeUp 0.8s 0.45s ease both;
+}
+.hero-ctas {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.8s 0.6s ease both;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--green-mid), var(--green-bright));
+  color: white; padding: 14px 32px; border-radius: 4px;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  font-weight: 600; text-decoration: none; border: none; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 24px rgba(34,153,45,0.35);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(34,153,45,0.5); }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: white;
+  padding: 14px 32px; border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  font-weight: 600; text-decoration: none; cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-outline:hover { border-color: var(--green-bright); color: var(--green-bright); background: rgba(34,153,45,0.06); }
+.stats-bar {
+  width: 100%; max-width: 900px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 8px;
+  margin-top: 70px; overflow: hidden;
+  animation: fadeUp 0.8s 0.75s ease both;
+}
+.stat-item {
+  background: rgba(255,255,255,0.03);
+  padding: 28px 20px; text-align: center;
+  transition: background 0.2s;
+}
+.stat-item:hover { background: rgba(34,153,45,0.08); }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 46px; color: var(--green-bright);
+  line-height: 1; margin-bottom: 4px;
+  letter-spacing: 2px;
+}
+.stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+.scroll-hint {
+  position: absolute; bottom: 30px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 2px;
+  animation: bounce 2s ease-in-out infinite;
+}
+.scroll-hint i { font-size: 14px; }
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+/* ──────────────── PILLARS ──────────────── */
+.pillars-section {
+  padding: 100px 6vw;
+  background: linear-gradient(180deg, var(--slate) 0%, #1a2530 100%);
+}
+.section-header { text-align: center; margin-bottom: 70px; }
+.section-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--green-bright);
+  padding: 4px 14px;
+  border: 1px solid rgba(34,153,45,0.3);
+  border-radius: 2px;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 58px);
+  letter-spacing: 3px;
+  line-height: 1;
+}
+.section-title .accent { color: var(--green-bright); }
+.section-desc {
+  font-family: var(--font-serif);
+  font-size: 17px; color: rgba(255,255,255,0.5);
+  max-width: 500px; margin: 16px auto 0;
+  font-style: italic;
+}
+.pillars-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+.pillar-card {
+  background: rgba(255,255,255,0.03);
+  padding: 50px 36px;
+  transition: background 0.3s;
+  position: relative; overflow: hidden;
+}
+.pillar-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; background: linear-gradient(90deg, var(--green-mid), var(--green-bright));
+  transform: scaleX(0); transition: transform 0.35s ease;
+  transform-origin: left;
+}
+.pillar-card:hover { background: rgba(34,153,45,0.07); }
+.pillar-card:hover::before { transform: scaleX(1); }
+.pillar-icon {
+  width: 56px; height: 56px;
+  background: rgba(34,153,45,0.1); border: 1px solid rgba(34,153,45,0.2);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--green-bright);
+  margin-bottom: 28px;
+}
+.pillar-num {
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: 2px; color: var(--green-bright);
+  margin-bottom: 12px;
+}
+.pillar-name {
+  font-family: var(--font-display);
+  font-size: 28px; letter-spacing: 2px; margin-bottom: 14px;
+}
+.pillar-desc { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.7; }
+
+/* ──────────────── ABOUT ──────────────── */
+#about {
+  padding: 110px 6vw;
+  background: #141f29;
+}
+.about-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start; }
+.about-story-tag { margin-bottom: 20px; }
+.about-title {
+  font-family: var(--font-display);
+  font-size: clamp(42px, 5vw, 64px); letter-spacing: 3px; line-height: 0.95;
+  margin-bottom: 28px;
+}
+.about-body {
+  font-family: var(--font-serif);
+  font-size: 17px; color: rgba(255,255,255,0.65);
+  line-height: 1.85; margin-bottom: 20px;
+}
+.mission-vision { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.mv-card {
+  padding: 24px; border: 1px solid var(--border);
+  border-radius: 6px; background: rgba(34,153,45,0.04);
+}
+.mv-label {
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--green-bright); margin-bottom: 10px;
+}
+.mv-text { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.7; }
+.timeline { padding-top: 10px; }
+.timeline-item {
+  display: flex; gap: 24px; margin-bottom: 36px;
+  position: relative;
+}
+.timeline-item:not(:last-child)::before {
+  content: '';
+  position: absolute; left: 20px; top: 44px; bottom: -36px; width: 1px;
+  background: linear-gradient(180deg, var(--green-mid), transparent);
+}
+.timeline-dot {
+  width: 40px; height: 40px; min-width: 40px;
+  background: rgba(34,153,45,0.1); border: 1px solid var(--green-mid);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--green-bright); z-index: 1;
+}
+.timeline-content { padding-top: 8px; }
+.timeline-year {
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 2px; color: var(--green-bright);
+  margin-bottom: 4px;
+}
+.timeline-title {
+  font-family: var(--font-display);
+  font-size: 18px; letter-spacing: 1px; margin-bottom: 6px;
+}
+.timeline-desc { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+/* ──────────────── LEADERSHIP ──────────────── */
+#leadership {
+  padding: 110px 6vw;
+  background: linear-gradient(180deg, #1c2a35, #141f29);
+}
+.leadership-intro { text-align: center; margin-bottom: 80px; }
+.leaders-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.leader-card {
+  background: #141f29;
+  padding: 56px 48px;
+  display: flex; gap: 40px;
+  position: relative; overflow: hidden;
+  transition: background 0.3s;
+}
+.leader-card:hover { background: rgba(34,153,45,0.05); }
+.leader-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; bottom: 0; width: 4px;
+  background: linear-gradient(180deg, var(--green-mid), var(--green-bright));
+  opacity: 0; transition: opacity 0.3s;
+}
+.leader-card:hover::after { opacity: 1; }
+.leader-img-wrap {
+  width: 130px; min-width: 130px; height: 160px;
+  border-radius: 8px; overflow: hidden;
+  border: 2px solid rgba(34,153,45,0.25);
+  position: relative;
+}
+.leader-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.leader-img-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, rgba(34,153,45,0.2), rgba(26,122,46,0.1));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px; color: rgba(34,153,45,0.4);
+}
+.leader-info { flex: 1; }
+.leader-position {
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--green-bright); margin-bottom: 8px;
+}
+.leader-name {
+  font-family: var(--font-display);
+  font-size: 26px; letter-spacing: 2px;
+  margin-bottom: 6px; line-height: 1.1;
+}
+.leader-aka {
+  font-family: var(--font-serif);
+  font-style: italic; color: var(--text-muted);
+  font-size: 14px; margin-bottom: 18px;
+}
+.leader-divider {
+  width: 40px; height: 1px;
+  background: linear-gradient(90deg, var(--green-bright), transparent);
+  margin-bottom: 18px;
+}
+.leader-bio { font-size: 12.5px; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 18px; }
+.leader-quote {
+  border-left: 2px solid var(--green-mid);
+  padding: 12px 18px;
+  background: rgba(34,153,45,0.06);
+  border-radius: 0 6px 6px 0;
+  font-family: var(--font-serif);
+  font-style: italic; font-size: 14px;
+  color: rgba(255,255,255,0.7); line-height: 1.6;
+  margin-bottom: 16px;
+}
+.leader-traits { display: flex; flex-wrap: wrap; gap: 8px; }
+.trait-tag {
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 5px 12px;
+  border: 1px solid rgba(34,153,45,0.3);
+  border-radius: 3px; color: var(--green-bright);
+  background: rgba(34,153,45,0.07);
+}
+
+/* ──────────────── NWC ──────────────── */
+#nwc {
+  padding: 110px 6vw;
+  background: #0f1a22;
+}
+.nwc-header { text-align: center; margin-bottom: 70px; }
+.nwc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+.nwc-card {
+  background: rgba(255,255,255,0.025);
+  padding: 30px 24px; text-align: center;
+  transition: background 0.2s;
+  cursor: default;
+}
+.nwc-card:hover { background: rgba(34,153,45,0.06); }
+.nwc-avatar {
+  width: 72px; height: 72px;
+  background: linear-gradient(135deg, rgba(34,153,45,0.25), rgba(15,92,31,0.2));
+  border-radius: 50%; margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 26px; color: var(--green-bright);
+  border: 2px solid rgba(34,153,45,0.2);
+  position: relative; overflow: hidden;
+}
+.nwc-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.nwc-name { font-family: var(--font-display); font-size: 16px; letter-spacing: 1px; margin-bottom: 4px; }
+.nwc-role {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--green-bright);
+  margin-bottom: 14px;
+}
+.nwc-contact { display: flex; flex-direction: column; gap: 6px; }
+.nwc-contact-item {
+  display: flex; align-items: center; gap: 6px; justify-content: center;
+  font-size: 11px; color: rgba(255,255,255,0.45);
+}
+.nwc-contact-item i { color: var(--green-bright); font-size: 10px; }
+
+/* ──────────────── MEMBERS ──────────────── */
+#members {
+  padding: 110px 6vw;
+  background: #141f29;
+}
+.members-header { text-align: center; margin-bottom: 50px; }
+.members-controls {
+  display: flex; gap: 16px; margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.search-wrap {
+  flex: 1; min-width: 240px;
+  position: relative;
+}
+.search-wrap i {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 13px;
+}
+.search-input {
+  width: 100%; padding: 12px 16px 12px 42px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; color: white;
+  font-family: var(--font-body); font-size: 13px;
+  outline: none; transition: border-color 0.2s;
+}
+.search-input::placeholder { color: var(--text-muted); }
+.search-input:focus { border-color: var(--green-mid); }
+.filter-select {
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; color: white;
+  font-family: var(--font-body); font-size: 13px;
+  outline: none; cursor: pointer;
+  transition: border-color 0.2s;
+}
+.filter-select:focus { border-color: var(--green-mid); }
+.filter-select option { background: #1c2a35; }
+.members-table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
+.members-table { width: 100%; border-collapse: collapse; }
+.members-table thead { background: rgba(34,153,45,0.1); }
+.members-table th {
+  padding: 14px 18px; text-align: left;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--green-bright);
+  border-bottom: 1px solid var(--border);
+}
+.members-table td {
+  padding: 13px 18px;
+  font-size: 13px; color: rgba(255,255,255,0.75);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.members-table tr:last-child td { border-bottom: none; }
+.members-table tr { transition: background 0.15s; }
+.members-table tr:hover td { background: rgba(34,153,45,0.05); }
+.status-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 3px;
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+.status-active { background: rgba(34,153,45,0.15); color: var(--green-bright); border: 1px solid rgba(34,153,45,0.3); }
+.status-pending { background: rgba(255,193,7,0.1); color: #ffc107; border: 1px solid rgba(255,193,7,0.25); }
+.btn-contact {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--green-bright); background: rgba(34,153,45,0.08);
+  border: 1px solid rgba(34,153,45,0.25);
+  padding: 6px 14px; border-radius: 3px; cursor: pointer;
+  transition: all 0.2s; font-family: var(--font-mono);
+}
+.btn-contact:hover { background: rgba(34,153,45,0.15); }
+.no-results { text-align: center; padding: 60px 20px; color: var(--text-muted); font-size: 14px; }
+
+/* ──────────────── CONTACT ──────────────── */
+#contact {
+  padding: 110px 6vw;
+  background: #0f1a22;
+}
+.contact-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 80px; align-items: start; }
+.contact-info-title { font-family: var(--font-display); font-size: 46px; letter-spacing: 3px; line-height: 1; margin-bottom: 20px; }
+.contact-sub { font-family: var(--font-serif); font-style: italic; font-size: 16px; color: rgba(255,255,255,0.5); margin-bottom: 40px; }
+.contact-items { display: flex; flex-direction: column; gap: 20px; }
+.contact-item { display: flex; gap: 16px; align-items: flex-start; }
+.contact-icon {
+  width: 44px; height: 44px; min-width: 44px;
+  background: rgba(34,153,45,0.1); border: 1px solid rgba(34,153,45,0.2);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  color: var(--green-bright); font-size: 16px;
+}
+.contact-detail { }
+.contact-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.contact-value { font-size: 14px; color: rgba(255,255,255,0.8); }
+.contact-value a { color: var(--green-bright); text-decoration: none; }
+.contact-form {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 44px;
+}
+.form-title {
+  font-family: var(--font-display);
+  font-size: 24px; letter-spacing: 2px; margin-bottom: 8px;
+}
+.form-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-group { margin-bottom: 14px; }
+.form-label {
+  display: block; font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 8px;
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%; padding: 12px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; color: white;
+  font-family: var(--font-body); font-size: 13px;
+  outline: none; transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--green-mid); }
+.form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.2); }
+.form-textarea { resize: vertical; min-height: 110px; }
+.form-select option { background: #1c2a35; }
+.form-submit {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--green-mid), var(--green-bright));
+  color: white; border: none; border-radius: 6px; cursor: pointer;
+  font-family: var(--font-body); font-size: 11px; letter-spacing: 3px;
+  text-transform: uppercase; font-weight: 600;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: 0 6px 20px rgba(34,153,45,0.3);
+}
+.form-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+.form-success {
+  display: none; text-align: center; padding: 30px;
+  color: var(--green-bright);
+}
+.form-success i { font-size: 40px; margin-bottom: 12px; }
+.form-success p { font-family: var(--font-serif); font-style: italic; font-size: 16px; }
+
+/* ──────────────── FOOTER ──────────────── */
+footer {
+  background: #090f14;
+  padding: 60px 6vw 30px;
+  border-top: 1px solid var(--border);
+}
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; margin-bottom: 50px; }
+.footer-about p { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.8; margin-top: 14px; }
+.footer-col-title {
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--green-bright); margin-bottom: 18px;
+}
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 10px; }
+.footer-links a {
+  color: rgba(255,255,255,0.4); text-decoration: none;
+  font-size: 13px; transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--green-bright); }
+.footer-socials { display: flex; gap: 12px; margin-top: 20px; }
+.social-btn {
+  width: 38px; height: 38px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5); font-size: 15px; text-decoration: none;
+  transition: all 0.2s;
+}
+.social-btn:hover { background: var(--green-mid); color: white; border-color: var(--green-mid); }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 24px; display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+.footer-tagline {
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 2px; color: var(--green-bright);
+  text-transform: uppercase;
+}
+
+/* ──────────────── WHATSAPP FLOAT ──────────────── */
+.wa-float {
+  position: fixed; bottom: 32px; right: 32px; z-index: 900;
+  width: 58px; height: 58px;
+  background: #25d366;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 26px; text-decoration: none;
+  box-shadow: 0 6px 24px rgba(37,211,102,0.45);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: pulseGreen 2.5s ease-in-out infinite;
+}
+.wa-float:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(37,211,102,0.65); }
+@keyframes pulseGreen {
+  0%,100% { box-shadow: 0 6px 24px rgba(37,211,102,0.45), 0 0 0 0 rgba(37,211,102,0.3); }
+  50% { box-shadow: 0 6px 24px rgba(37,211,102,0.45), 0 0 0 14px rgba(37,211,102,0); }
+}
+
+/* ──────────────── MODAL ──────────────── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+  align-items: center; justify-content: center; padding: 24px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #1c2a35; border: 1px solid var(--border);
+  border-radius: 10px; padding: 44px; max-width: 480px; width: 100%;
+  position: relative;
+}
+.modal-close {
+  position: absolute; top: 18px; right: 18px;
+  background: none; border: none; color: var(--text-muted);
+  font-size: 18px; cursor: pointer; transition: color 0.2s;
+}
+.modal-close:hover { color: white; }
+.modal-title { font-family: var(--font-display); font-size: 28px; letter-spacing: 2px; margin-bottom: 8px; }
+.modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
+
+/* ──────────────── SECTION DIVIDER ──────────────── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green-mid), transparent);
+  margin: 0;
+}
+
+/* ──────────────── ADMIN LINK ──────────────── */
+.admin-note {
+  text-align: center; padding: 30px;
+  background: rgba(34,153,45,0.04);
+  border-top: 1px solid var(--border);
+}
+.admin-note p { font-size: 12px; color: var(--text-muted); }
+.admin-note a { color: var(--green-bright); text-decoration: none; font-family: var(--font-mono); }
+
+/* ──────────────── RESPONSIVE ──────────────── */
+@media(max-width: 1024px) {
+  .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 50px; }
+  .leaders-grid { grid-template-columns: 1fr; }
+  .leader-card { flex-direction: column; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .stats-bar { grid-template-columns: 2fr 2fr; }
+  .pillars-grid { grid-template-columns: 1fr; }
+  .mission-vision { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .nwc-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media(max-width: 480px) {
+  .stats-bar { grid-template-columns: 1fr 1fr; }
+  .hero-ctas { flex-direction: column; align-items: center; }
+  .nwc-grid { grid-template-columns: 1fr; }
+  .stat-num { font-size: 36px; }
+}
+
+/* ──────────────── INTERSECTION OBSERVER ANIMATIONS ──────────────── */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity: 0; transform: translateX(-30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right { opacity: 0; transform: translateX(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#home" class="nav-logo">
+    <img src="https://i.ibb.co/pBGvp2Ws/F5-C67239-AD88-45-FD-8444-C21271-AF3-FD0.jpg" class="nav-logo-img" alt="SGI Logo">
+    <div class="nav-logo-text">
+      <span>STRATEGY</span>
+      <span>Governance Initiative</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#leadership">Leadership</a>
+    <a href="#nwc">Committee</a>
+    <a href="#members">Members</a>
+    <a href="#contact" class="nav-cta">Contact</a>
+  </div>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home" onclick="toggleMenu()">Home</a>
+  <a href="#about" onclick="toggleMenu()">About</a>
+  <a href="#leadership" onclick="toggleMenu()">Leadership</a>
+  <a href="#nwc" onclick="toggleMenu()">NWC Committee</a>
+  <a href="#members" onclick="toggleMenu()">Members</a>
+  <a href="#contact" onclick="toggleMenu()">Contact</a>
+</div>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%;">
+    <img src="https://i.ibb.co/PvXfV8Bq/IMG-0814.jpg" class="hero-logo-img" alt="SGI Wordmark Logo">
+    <div class="hero-badge"><i class="fas fa-circle"></i> Governance Initiative &nbsp;·&nbsp; Bridging the Gap</div>
+    <p class="hero-desc">A new generation building disciplined political structure — from campuses to national leadership.</p>
+    <div class="hero-ctas">
+      <a href="#about" class="btn-primary"><i class="fas fa-compass"></i> Discover Our Initiative</a>
+      <a href="#contact" class="btn-outline"><i class="fas fa-handshake"></i> Join Us Today</a>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-num" data-target="500">0</div><div class="stat-label">Active Members</div></div>
+      <div class="stat-item"><div class="stat-num" data-target="18">0</div><div class="stat-label">States Covered</div></div>
+      <div class="stat-item"><div class="stat-num" data-target="5">0</div><div class="stat-label">Years of Impact</div></div>
+      <div class="stat-item"><div class="stat-num" data-target="24">0</div><div class="stat-label">NWC Officials</div></div>
+    </div>
+  </div>
+  <div class="scroll-hint"><i class="fas fa-chevron-down"></i><span>SCROLL</span></div>
+</section>
+
+<!-- ══════════════ PILLARS ══════════════ -->
+<div class="divider"></div>
+<section class="pillars-section">
+  <div class="section-header reveal">
+    <div class="section-tag">Core Framework</div>
+    <div class="section-title">Our Three <span class="accent">Pillars</span></div>
+    <p class="section-desc">The foundational principles that define every action we take as a governance initiative.</p>
+  </div>
+  <div class="pillars-grid">
+    <div class="pillar-card reveal">
+      <div class="pillar-icon"><i class="fas fa-users"></i></div>
+      <div class="pillar-num">01 —</div>
+      <div class="pillar-name">CONNECTING PEOPLE</div>
+      <p class="pillar-desc">Building a nationwide network that unites students, youths, and community leaders under a shared vision of inclusive and progressive governance.</p>
+    </div>
+    <div class="pillar-card reveal" style="transition-delay:0.1s">
+      <div class="pillar-icon"><i class="fas fa-landmark"></i></div>
+      <div class="pillar-num">02 —</div>
+      <div class="pillar-name">STRENGTHENING GOVERNANCE</div>
+      <p class="pillar-desc">Developing disciplined political structures, institutional capacity, and leadership pipelines from campus associations to national decision-making bodies.</p>
+    </div>
+    <div class="pillar-card reveal" style="transition-delay:0.2s">
+      <div class="pillar-icon"><i class="fas fa-seedling"></i></div>
+      <div class="pillar-num">03 —</div>
+      <div class="pillar-name">BUILDING OUR FUTURE</div>
+      <p class="pillar-desc">Empowering the next generation with the tools, training, and mentorship needed to lead effectively at every level of Nigeria's democratic governance.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ ABOUT ══════════════ -->
+<div class="divider"></div>
+<section id="about">
+  <div class="about-grid">
+    <div class="reveal-left">
+      <div class="about-story-tag"><div class="section-tag">Our Story</div></div>
+      <div class="about-title">WHO<br>WE <span style="color:var(--green-bright)">ARE</span></div>
+      <p class="about-body">Strategy Governance Initiative (SGI) was born out of a deep conviction that the future of Nigeria's governance lies with a disciplined, informed, and purposeful generation of leaders.</p>
+      <p class="about-body">What began as a student-led movement within campus politics has evolved into a structured national initiative — bridging the gap between campus activism and real-world governance. Our journey has taken us from Faculty Unions and Student Government bodies to active engagement with NGOs, policy circles, and national advocacy platforms.</p>
+      <p class="about-body">Today, SGI stands as a premier governance initiative — not a partisan organisation, but a civic institution dedicated to building the human capital that democratic Nigeria demands.</p>
+      <div class="mission-vision">
+        <div class="mv-card">
+          <div class="mv-label">Our Mission</div>
+          <p class="mv-text">To connect, train, and deploy a new generation of civic leaders committed to transparent, equitable, and people-centred governance across Nigeria.</p>
+        </div>
+        <div class="mv-card">
+          <div class="mv-label">Our Vision</div>
+          <p class="mv-text">A Nigeria where every community has access to disciplined, accountable governance — driven by youth who are structurally prepared to lead.</p>
+        </div>
+      </div>
+    </div>
+    <div class="timeline reveal-right">
+      <div class="section-tag" style="margin-bottom:30px">Growth Timeline</div>
+      <div class="timeline-item">
+        <div class="timeline-dot">01</div>
+        <div class="timeline-content">
+          <div class="timeline-year">2020 — FOUNDATION</div>
+          <div class="timeline-title">Campus Roots</div>
+          <p class="timeline-desc">Founded within student union politics, SGI emerged as a platform for structured, governance-focused student leadership across university campuses.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">02</div>
+        <div class="timeline-content">
+          <div class="timeline-year">2022 — EXPANSION</div>
+          <div class="timeline-title">Multi-Campus Presence</div>
+          <p class="timeline-desc">Extended reach to universities across multiple states. Key members participated in the NAPPAD Constitutional Review Committee, signalling entry into institutional policy work.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">03</div>
+        <div class="timeline-content">
+          <div class="timeline-year">2023 — STRUCTURE</div>
+          <div class="timeline-title">National Working Committee</div>
+          <p class="timeline-desc">Formalised the National Working Committee (NWC), establishing clear leadership hierarchy, zonal coordinators, and a national headquarters framework.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">04</div>
+        <div class="timeline-content">
+          <div class="timeline-year">2024 — IMPACT</div>
+          <div class="timeline-title">NGO & Policy Engagement</div>
+          <p class="timeline-desc">Transitioned from student activism to national civic engagement — partnering with NGOs, contributing to policy discourse, and building a 500+ member network.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">05</div>
+        <div class="timeline-content">
+          <div class="timeline-year">2025 — TODAY</div>
+          <div class="timeline-title">Governance Initiative</div>
+          <p class="timeline-desc">SGI is now a nationally recognised governance initiative — bridging grassroots communities with national leadership structures across 18 states.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ LEADERSHIP ══════════════ -->
+<div class="divider"></div>
+<section id="leadership">
+  <div class="leadership-intro reveal">
+    <div class="section-tag">National Leadership</div>
+    <div class="section-title">Meet the <span class="accent">Principals</span></div>
+    <p class="section-desc">Proven leaders who have built SGI from the ground up — tested, trusted, and committed to the mission.</p>
+  </div>
+
+  <div class="leaders-grid">
+    <!-- NATIONAL CHAIRMAN -->
+    <div class="leader-card reveal-left">
+      <div class="leader-img-wrap">
+        <img src="https://i.ibb.co/kVsGrp8J/IMG-0814.jpg" alt="Hon. Akinmboni Marcus Olamide" onerror="this.parentElement.innerHTML='<div class=\'leader-img-placeholder\'><i class=\'fas fa-user\'></i></div>'">
+      </div>
+      <div class="leader-info">
+        <div class="leader-position">NC, SGI — National Chairman</div>
+        <div class="leader-name">HON. AKINMBONI<br>MARCUS OLAMIDE</div>
+        <div class="leader-aka">Trusted. Tested. Visionary.</div>
+        <div class="leader-divider"></div>
+        <p class="leader-bio">A proven institutional leader and student governance veteran. Served two consecutive terms as SUG Director of Socials (2023–2025), shaped policy on the NAPPAD Constitutional Review Committee (2022/2023), and remains a key stakeholder in both the Faculty of Management & Social Sciences and NAPPAD (2023–2026).</p>
+        <blockquote class="leader-quote">"My leadership is built on proven experience, strong grassroots connection, and an unwavering commitment to inclusive governance. The future belongs to those who build it intentionally."</blockquote>
+        <div class="leader-traits">
+          <span class="trait-tag">Proven Experience</span>
+          <span class="trait-tag">Grassroots Connection</span>
+          <span class="trait-tag">Strategic Coordination</span>
+          <span class="trait-tag">Inclusive Governance</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NATIONAL LEADER -->
+    <div class="leader-card reveal-right">
+      <div class="leader-img-wrap">
+        <img src="https://i.ibb.co/842yH13X/F5-C67239-AD88-45-FD-8444-C21271-AF3-FD0.jpg" alt="Hon. Alabede Bukola Habeeb" style="object-position: center;" onerror="this.parentElement.innerHTML='<div class=\'leader-img-placeholder\'><i class=\'fas fa-user\'></i></div>'">
+      </div>
+      <div class="leader-info">
+        <div class="leader-position">National Leader, SGI</div>
+        <div class="leader-name">HON. ALABEDE<br>BUKOLA HABEEB</div>
+        <div class="leader-aka">PKA Damxy — Legislative Architect</div>
+        <div class="leader-divider"></div>
+        <p class="leader-bio">A progressive leader with an unbroken chain of institutional roles — from Departmental Appointee (Year 1) to Speaker, FASSA (Final Year), to Leader of Geology Students at Kwara State University. Co-founded the Federation of Igbaja Students Association (KWASU Chapter) and collaborated across five successive student leadership administrations.</p>
+        <blockquote class="leader-quote">"True leadership is not about position — it is about the structures you build, the institutions you strengthen, and the people you bring along on the journey."</blockquote>
+        <div class="leader-traits">
+          <span class="trait-tag">Legislative Leadership</span>
+          <span class="trait-tag">Financial Oversight</span>
+          <span class="trait-tag">Institutional Building</span>
+          <span class="trait-tag">Student Advocacy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ NWC ══════════════ -->
+<div class="divider"></div>
+<section id="nwc">
+  <div class="nwc-header reveal">
+    <div class="section-tag">National Working Committee</div>
+    <div class="section-title">The <span class="accent">NWC</span></div>
+    <p class="section-desc">The operational backbone of SGI — experienced officials driving execution at the national level.</p>
+  </div>
+
+  <div class="nwc-grid" id="nwcGrid">
+    <!-- Cards populated by JS -->
+  </div>
+</section>
+
+<!-- ══════════════ MEMBERS ══════════════ -->
+<div class="divider"></div>
+<section id="members">
+  <div class="members-header reveal">
+    <div class="section-tag">Members Directory</div>
+    <div class="section-title">SGI <span class="accent">Network</span></div>
+    <p class="section-desc">A growing national community of governance-focused leaders across Nigeria.</p>
+  </div>
+
+  <div class="members-controls">
+    <div class="search-wrap">
+      <i class="fas fa-search"></i>
+      <input class="search-input" id="memberSearch" type="text" placeholder="Search by name or state…" oninput="filterMembers()">
+    </div>
+    <select class="filter-select" id="stateFilter" onchange="filterMembers()">
+      <option value="">All States</option>
+      <option>Lagos</option><option>Kwara</option><option>Oyo</option>
+      <option>Abuja (FCT)</option><option>Rivers</option><option>Kano</option>
+      <option>Delta</option><option>Ogun</option><option>Ondo</option>
+      <option>Osun</option><option>Enugu</option><option>Anambra</option>
+    </select>
+    <select class="filter-select" id="statusFilter" onchange="filterMembers()">
+      <option value="">All Status</option>
+      <option>Active</option><option>Pending</option>
+    </select>
+  </div>
+
+  <div class="members-table-wrap">
+    <table class="members-table" id="membersTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Full Name</th>
+          <th>State</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="membersBody">
+      </tbody>
+    </table>
+    <div class="no-results" id="noResults" style="display:none">
+      <i class="fas fa-search" style="font-size:28px;color:var(--green-mid);margin-bottom:12px;display:block"></i>
+      No members found matching your search.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ CONTACT ══════════════ -->
+<div class="divider"></div>
+<section id="contact">
+  <div class="contact-grid">
+    <div class="reveal-left">
+      <div class="section-tag">Get in Touch</div>
+      <div class="contact-info-title">LET'S<br><span style="color:var(--green-bright)">CONNECT</span></div>
+      <p class="contact-sub">Whether you're a prospective member, partner organisation, or media contact — we want to hear from you.</p>
+      <div class="contact-items">
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="contact-detail">
+            <div class="contact-label">National HQ</div>
+            <div class="contact-value">Nigeria (Nationwide Initiative)</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+          <div class="contact-detail">
+            <div class="contact-label">Official Email</div>
+            <div class="contact-value"><a href="mailto:info@strategygovernance.ng">info@strategygovernance.ng</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
+          <div class="contact-detail">
+            <div class="contact-label">WhatsApp Line</div>
+            <div class="contact-value"><a href="https://wa.me/2348000000000" target="_blank">+234 800 000 0000</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fab fa-twitter"></i></div>
+          <div class="contact-detail">
+            <div class="contact-label">Social Media</div>
+            <div class="contact-value"><a href="#">@SGInitiative_NG</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-socials" style="margin-top:32px">
+        <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <div class="contact-form reveal-right">
+      <div class="form-title">SEND A MESSAGE</div>
+      <p class="form-sub">Fill the form below and our team will respond within 24–48 hours.</p>
+      <div id="contactFormWrap">
+        <div class="form-row">
+          <div>
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" id="fName" placeholder="Your first name">
+          </div>
+          <div>
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" id="lName" placeholder="Your last name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" id="cEmail" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">State / Location</label>
+          <input class="form-input" type="text" id="cState" placeholder="Your state">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <select class="form-select" id="cSubject">
+            <option value="">Select a subject</option>
+            <option>Membership Enquiry</option>
+            <option>Partnership Proposal</option>
+            <option>Media / Press</option>
+            <option>General Enquiry</option>
+            <option>Volunteer Interest</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" id="cMessage" placeholder="Write your message here…"></textarea>
+        </div>
+        <button class="form-submit" onclick="submitContactForm()">
+          <i class="fas fa-paper-plane" style="margin-right:8px"></i> SEND MESSAGE
+        </button>
+      </div>
+      <div class="form-success" id="formSuccess">
+        <i class="fas fa-check-circle"></i>
+        <p>Your message has been received.<br>We'll be in touch shortly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<div class="divider"></div>
+<footer>
+  <div class="footer-grid">
+    <div class="footer-about">
+      <a href="#home" class="nav-logo" style="display:inline-flex">
+        <img src="https://i.ibb.co/pBGvp2Ws/F5-C67239-AD88-45-FD-8444-C21271-AF3-FD0.jpg" class="nav-logo-img" alt="SGI Logo">
+        <div class="nav-logo-text">
+          <span>STRATEGY</span>
+          <span>Governance Initiative</span>
+        </div>
+      </a>
+      <p>A national governance initiative connecting people, strengthening institutions, and building Nigeria's future — one disciplined leader at a time.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigation</div>
+      <ul class="footer-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About SGI</a></li>
+        <li><a href="#leadership">Leadership</a></li>
+        <li><a href="#nwc">NWC Committee</a></li>
+        <li><a href="#members">Members</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Initiative</div>
+      <ul class="footer-links">
+        <li><a href="#">Our Pillars</a></li>
+        <li><a href="#">Press & Media</a></li>
+        <li><a href="#">Publications</a></li>
+        <li><a href="#">Events</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Engage</div>
+      <ul class="footer-links">
+        <li><a href="#contact">Become a Member</a></li>
+        <li><a href="#contact">Partner With Us</a></li>
+        <li><a href="#contact">Volunteer</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Strategy Governance Initiative. All Rights Reserved.</div>
+    <div class="footer-tagline">Bridging the Gap · Building the Nation</div>
+  </div>
+</footer>
+
+<div class="admin-note">
+  <p>Admin access: <a href="#" onclick="openAdminModal();return false;">Secure Admin Portal</a> &nbsp;·&nbsp; Protected by SGI Security Protocol</p>
+</div>
+
+<!-- ══════════════ WHATSAPP FLOAT ══════════════ -->
+<a href="https://wa.me/2348000000000" target="_blank" class="wa-float" title="Chat on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- ══════════════ CONTACT REQUEST MODAL ══════════════ -->
+<div class="modal-overlay" id="contactModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('contactModal')"><i class="fas fa-times"></i></button>
+    <div class="modal-title">REQUEST CONTACT</div>
+    <p class="modal-sub">Send a contact request to this member. A coordinator will facilitate the connection securely.</p>
+    <div class="form-group">
+      <label class="form-label">Your Full Name</label>
+      <input class="form-input" type="text" id="reqName" placeholder="Your full name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Your Email</label>
+      <input class="form-input" type="email" id="reqEmail" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Reason for Contact</label>
+      <textarea class="form-textarea" id="reqReason" placeholder="Brief reason…" style="min-height:80px"></textarea>
+    </div>
+    <button class="form-submit" onclick="submitContactRequest()">SUBMIT REQUEST</button>
+  </div>
+</div>
+
+<!-- ══════════════ ADMIN MODAL ══════════════ -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('adminModal')"><i class="fas fa-times"></i></button>
+    <div class="modal-title">ADMIN PORTAL</div>
+    <p class="modal-sub">Secure access for authorised SGI administrators only.</p>
+    <div class="form-group">
+      <label class="form-label">Admin Username</label>
+      <input class="form-input" type="text" id="adminUser" placeholder="Username">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="adminPass" placeholder="••••••••••">
+    </div>
+    <div class="form-group">
+      <label class="form-label">2FA Code</label>
+      <input class="form-input" type="text" id="adminOtp" placeholder="6-digit code" maxlength="6">
+    </div>
+    <div id="adminError" style="color:#ff6b6b;font-size:12px;margin-bottom:12px;display:none">
+      <i class="fas fa-exclamation-triangle"></i> Invalid credentials. Access denied.
+    </div>
+    <button class="form-submit" onclick="attemptAdminLogin()">SECURE LOGIN</button>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:14px;text-align:center">
+      <i class="fas fa-lock" style="margin-right:4px"></i>
+      All login attempts are logged and monitored.
+    </p>
+  </div>
+</div>
+
+<script>
+// ──── NWC DATA ────
+const nwcMembers = [
+  { name: "Akinmboni Marcus", role: "National Chairman", initials: "AM", phone: "+234 800 000 0001", email: "chairman@sgi.ng", tier: "top" },
+  { name: "Alabede Bukola", role: "National Leader", initials: "AB", phone: "+234 800 000 0002", email: "leader@sgi.ng", tier: "top" },
+  { name: "Adewale Segun", role: "Secretary General", initials: "AS", phone: "+234 800 000 0003", email: "secretary@sgi.ng", tier: "top" },
+  { name: "Fatima Bello", role: "National Treasurer", initials: "FB", phone: "+234 800 000 0004", email: "treasurer@sgi.ng", tier: "top" },
+  { name: "Chukwuemeka Obi", role: "PRO", initials: "CO", phone: "+234 800 000 0005", email: "pro@sgi.ng", tier: "top" },
+  { name: "Nkechi Adaeze", role: "Women Leader", initials: "NA", phone: "+234 800 000 0006", email: "women@sgi.ng", tier: "top" },
+  { name: "Ibrahim Musa", role: "North Coordinator", initials: "IM", tier: "general" },
+  { name: "Olumide Taiwo", role: "South-West Coord.", initials: "OT", tier: "general" },
+  { name: "Chioma Eze", role: "South-East Coord.", initials: "CE", tier: "general" },
+  { name: "Yusuf Abdullahi", role: "North-East Coord.", initials: "YA", tier: "general" },
+  { name: "Emeka Ihejirika", role: "South-South Coord.", initials: "EI", tier: "general" },
+  { name: "Rashida Suleiman", role: "Asst. Secretary", initials: "RS", tier: "general" },
+];
+
+function renderNWC() {
+  const grid = document.getElementById('nwcGrid');
+  grid.innerHTML = nwcMembers.map(m => `
+    <div class="nwc-card reveal">
+      <div class="nwc-avatar">${m.initials}</div>
+      <div class="nwc-name">${m.name}</div>
+      <div class="nwc-role">${m.role}</div>
+      ${m.tier === 'top' ? `
+      <div class="nwc-contact">
+        <div class="nwc-contact-item"><i class="fas fa-phone"></i>${m.phone}</div>
+        <div class="nwc-contact-item"><i class="fas fa-envelope"></i>${m.email}</div>
+      </div>` : ''}
+    </div>
+  `).join('');
+  observeReveal();
+}
+
+// ──── MEMBERS DATA ────
+const membersData = [
+  { name: "Adebayo Olufemi", state: "Lagos", role: "Zonal Rep", status: "Active" },
+  { name: "Ngozi Chukwu", state: "Anambra", role: "Member", status: "Active" },
+  { name: "Salihu Tanko", state: "Kano", role: "State Coord.", status: "Active" },
+  { name: "Tosin Afolabi", state: "Oyo", role: "Member", status: "Pending" },
+  { name: "Emeka Nwosu", state: "Enugu", role: "Zonal Rep", status: "Active" },
+  { name: "Mariam Lawal", state: "Kwara", role: "Member", status: "Active" },
+  { name: "Bello Umar", state: "Abuja (FCT)", role: "HQ Liaison", status: "Active" },
+  { name: "Chidinma Okeke", state: "Rivers", role: "Member", status: "Active" },
+  { name: "Segun Adeyemi", state: "Ogun", role: "Member", status: "Pending" },
+  { name: "Funmilayo Bashorun", state: "Osun", role: "State Coord.", status: "Active" },
+  { name: "Abdullahi Garba", state: "Kano", role: "Member", status: "Active" },
+  { name: "Precious Ndukwe", state: "Delta", role: "Zonal Rep", status: "Active" },
+  { name: "Omotunde Ajayi", state: "Lagos", role: "Member", status: "Active" },
+  { name: "Uche Obiora", state: "Anambra", role: "Member", status: "Pending" },
+  { name: "Rashida Bello", state: "Kwara", role: "Member", status: "Active" },
+  { name: "Hakeem Tijani", state: "Oyo", role: "Member", status: "Active" },
+];
+
+function renderMembers(data) {
+  const tbody = document.getElementById('membersBody');
+  const noRes = document.getElementById('noResults');
+  if (!data.length) {
+    tbody.innerHTML = '';
+    noRes.style.display = 'block';
+    return;
+  }
+  noRes.style.display = 'none';
+  tbody.innerHTML = data.map((m,i) => `
+    <tr>
+      <td style="color:var(--text-muted);font-family:var(--font-mono);font-size:11px">${String(i+1).padStart(2,'0')}</td>
+      <td style="font-weight:500">${m.name}</td>
+      <td>${m.state}</td>
+      <td style="color:rgba(255,255,255,0.55)">${m.role}</td>
+      <td><span class="status-badge status-${m.status.toLowerCase()}">${m.status}</span></td>
+      <td><button class="btn-contact" onclick="openContactModal('${m.name}')"><i class="fas fa-envelope"></i> Request Contact</button></td>
+    </tr>
+  `).join('');
+}
+
+function filterMembers() {
+  const q = document.getElementById('memberSearch').value.toLowerCase();
+  const state = document.getElementById('stateFilter').value;
+  const status = document.getElementById('statusFilter').value;
+  const filtered = membersData.filter(m => {
+    const matchQ = !q || m.name.toLowerCase().includes(q) || m.state.toLowerCase().includes(q);
+    const matchState = !state || m.state === state;
+    const matchStatus = !status || m.status === status;
+    return matchQ && matchState && matchStatus;
+  });
+  renderMembers(filtered);
+}
+
+// ──── STAT COUNTER ANIMATION ────
+function animateCounters() {
+  document.querySelectorAll('[data-target]').forEach(el => {
+    const target = +el.dataset.target;
+    const suffix = target >= 100 ? '+' : '';
+    let current = 0;
+    const step = Math.ceil(target / 60);
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = current + suffix;
+      if (current >= target) clearInterval(timer);
+    }, 25);
+  });
+}
+
+// ──── INTERSECTION OBSERVER ────
+function observeReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+}
+
+// ──── NAVBAR SCROLL ────
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ──── MOBILE MENU ────
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// ──── MODALS ────
+function openContactModal(name) {
+  document.getElementById('reqName').value = '';
+  document.getElementById('reqEmail').value = '';
+  document.getElementById('reqReason').value = `I'd like to connect with ${name} regarding…`;
+  document.getElementById('contactModal').classList.add('open');
+}
+function openAdminModal() {
+  document.getElementById('adminModal').classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open'); });
+});
+
+// ──── CONTACT FORM ────
+function submitContactForm() {
+  const fields = ['fName','lName','cEmail','cSubject','cMessage'];
+  const empty = fields.filter(f => !document.getElementById(f).value.trim());
+  if (empty.length) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+  document.getElementById('contactFormWrap').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+}
+
+// ──── CONTACT REQUEST ────
+function submitContactRequest() {
+  const name = document.getElementById('reqName').value.trim();
+  const email = document.getElementById('reqEmail').value.trim();
+  if (!name || !email) { alert('Please fill your name and email.'); return; }
+  closeModal('contactModal');
+  setTimeout(() => alert('Contact request submitted. Our team will facilitate the connection within 24 hours.'), 200);
+}
+
+// ──── ADMIN LOGIN (DEMO) ────
+function attemptAdminLogin() {
+  const u = document.getElementById('adminUser').value;
+  const p = document.getElementById('adminPass').value;
+  const otp = document.getElementById('adminOtp').value;
+  const err = document.getElementById('adminError');
+  if (u === 'admin' && p === 'sgi2025' && otp.length === 6) {
+    err.style.display = 'none';
+    closeModal('adminModal');
+    alert('✓ Admin access granted. Redirecting to admin panel…');
+  } else {
+    err.style.display = 'block';
+  }
+}
+
+// ──── INIT ────
+document.addEventListener('DOMContentLoaded', () => {
+  renderNWC();
+  renderMembers(membersData);
+  observeReveal();
+  // Trigger counter when stats bar is visible
+  const statsBar = document.querySelector('.stats-bar');
+  const statsObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) { animateCounters(); statsObserver.disconnect(); }
+  }, { threshold: 0.5 });
+  if (statsBar) statsObserver.observe(statsBar);
+});
+</script>
+</body>
+</html>
